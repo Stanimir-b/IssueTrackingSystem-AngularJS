@@ -19,7 +19,7 @@ angular.module('issueSystem.home', [
                 authentication.loginUser(user)
                     .then(function (loggedInUser) {
                         notifyService.showInfo('You have successfully logged in!');
-                        $location.path('/');
+                        $location.path('/dashboard');
                     }, function (err) {
                         notifyService.showError('You were unable to login. Check your credentials!', err.error);
                     });
@@ -29,7 +29,7 @@ angular.module('issueSystem.home', [
                 authentication.registerUser(user)
                     .then(function (registeredUser) {
                         notifyService.showInfo('You have successfully registered!');
-                        $location.path('/');
+                        $location.path('/dashboard');
                     }, function (err) {
                         notifyService.showError('You were unable to register! Check the length of your password.', err.error);
                     });
