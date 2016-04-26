@@ -2,30 +2,36 @@
 
 var app = angular.module('issueSystem', [
     'ngRoute',
-    'ui.router',
     'issueSystem.home',
-    'issueSystem.users.identity'
+    'issueSystem.users.identity',
+    'issueSystem.dashboard'
 ]);
 
-app.constant('BASE_URL', 'http://softuni-issue-tracker.azurewebsites.net/api/');
+app.constant('BASE_URL_API', 'http://softuni-issue-tracker.azurewebsites.net/api/');
+app.constant('BASE_URL', 'http://softuni-issue-tracker.azurewebsites.net/');
 
-app.config(function ($stateProvider) {
-    $stateProvider.state('root', {
-        url: '',
-        controller: function ($state) {
-            if($state.is('root')) {
-                $state.go(sessionStorage['currentUser'] ? "dashboard" : "anonymous");
-            }
-        }
-    });
-
-    $stateProvider.state('anonymous', {
+app.config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/', {
         templateUrl: 'templates/home.html',
         controller: 'HomeController'
     });
 
-    $stateProvider.state('dashboard', {
+    $routeProvider.otherwise({redirectTo: '/'});
+}]);
+
+app.config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/dashboard', {
         templateUrl: 'templates/dashboard.html',
         controller: 'DashboardController'
     });
-});
+
+    $routeProvider.otherwise({redirectTo: '/'});
+}]);
+
+app.run(function ($rootScope, $location, authentication) {
+    $rootScope.$on('$locationChangeStart', function (event) {
+        if($location.path().indexOf("/user/") != -1 && !authentication.isLoggedIn()) {
+            $location.path('/');
+        }
+    })
+})
